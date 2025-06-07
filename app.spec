@@ -1,11 +1,15 @@
 # app.spec
+
 block_cipher = None
 
 a = Analysis(
-    ['app/app/native.py'],  # entrypoint
+    ['app/native.py'],
     pathex=[],
     binaries=[],
-    datas=[('app/app/ui/exported', 'ui/exported')],
+    datas=[
+        ('app/ui/exported', 'ui/exported'),
+        ('app/app/migrations', 'migrations'),
+    ],
     hiddenimports=[],
     hookspath=[],
     runtime_hooks=[],
@@ -40,4 +44,3 @@ coll = COLLECT(
     upx_exclude=[],
     name='ytptube-native'
 )
-
