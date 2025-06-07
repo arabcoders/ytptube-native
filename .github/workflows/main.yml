@@ -19,7 +19,8 @@ jobs:
       contents: write
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        #os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -28,19 +29,6 @@ jobs:
         with:
           repository: arabcoders/ytptube
           ref: ${{ github.event.inputs.tag }}
-
-      - name: Install system dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libxcb-cursor0 \
-            libxkbcommon-x11-0
-
-      - name: Install Qt (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install -y qt6-base-dev
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -70,17 +58,15 @@ jobs:
           pip install pipenv
           pipenv install --deploy
 
-      - name: Install PyInstaller + Qt backend
+      - name: Install PyInstaller + Qt backend (Windows)
+        if: matrix.os == 'windows-latest'
         run: |
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            pipenv run pip install \
-              pyinstaller \
-              pywebview \
-              QtPy \
-              PySide6
-          else
-            pipenv run pip install pyinstaller pywebview[qt]
-          fi        
+          pipenv run pip install pyinstaller pywebview QtPy PySide6
+
+      - name: Install PyInstaller + Qt backend (Other OSs)
+        if: matrix.os != 'windows-latest'
+        run: |
+          pipenv run pip install pyinstaller pywebview[qt]
 
       - name: Build native binary
         run: |
