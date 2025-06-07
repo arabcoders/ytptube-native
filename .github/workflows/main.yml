@@ -66,7 +66,7 @@ jobs:
 
       - name: Install PyInstaller + GUI backend
         run: |
-          pipenv install pyinstaller pywebview[gtk] qtpy
+          pipenv run pip install pyinstaller pywebview[gtk] qtpy
 
       - name: Build native binary
         run: |
