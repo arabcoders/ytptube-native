@@ -44,7 +44,7 @@ jobs:
             libcairo2-dev \
             pkg-config \
             python3-gi \
-            libwebkit2gtk-4.0-dev
+            libwebkit2gtk-4.1-dev
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
