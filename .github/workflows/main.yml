@@ -1,0 +1,74 @@
+name: Build Native Binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        description: "Tag to build from main repo"
+
+jobs:
+  build:
+    permissions:
+      packages: write
+      contents: write
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout native-builder
+        uses: actions/checkout@v4
+
+      - name: Checkout source repo
+        uses: actions/checkout@v4
+        with:
+          repository: arabcoders/ytptube
+          ref: ${{ github.event.inputs.tag }}
+          path: app
+
+      - name: Set up Node.js & PNPM
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Build frontend
+        working-directory: app/ui
+        run: |
+          npm install --production --prefer-offline --frozen-lockfile
+          npm run generate
+          mkdir -p app/app/ui/exported
+          cp -r app/ui/exported/* app/app/ui/exported/
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install Python dependencies
+        run: |
+          pip install pipenv
+          cd app
+          pipenv install --deploy
+
+      - name: Install PyInstaller + GUI backend
+        run: |
+          pip install pyinstaller pywebview[gtk] qtpy
+
+      - name: Build native binary
+        run: |
+          cd app
+          pipenv run pyinstaller ../app.spec
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.os }}
+          path: app/dist/*
