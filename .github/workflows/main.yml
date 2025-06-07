@@ -19,7 +19,8 @@ jobs:
       contents: write
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -50,8 +51,6 @@ jobs:
         run: |
           pnpm install --production --prefer-offline --frozen-lockfile
           pnpm run generate
-          mkdir -p app/app/ui/exported
-          cp -r app/ui/exported/* app/app/ui/exported/
 
       - name: Set up Python
         uses: actions/setup-python@v5
