@@ -7,6 +7,11 @@ on:
         required: true
         description: "Tag to build from main repo"
 
+env:
+  PYTHON_VERSION: 3.11
+  PNPM_VERSION: 10
+  NODE_VERSION: 20
+
 jobs:
   build:
     permissions:
@@ -28,29 +33,30 @@ jobs:
           ref: ${{ github.event.inputs.tag }}
           path: app
 
-      - name: Set up Node.js & PNPM
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Install PNPM
+      - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: "app/ui/pnpm-lock.yaml"
 
       - name: Build frontend
         working-directory: app/ui
         run: |
-          npm install --production --prefer-offline --frozen-lockfile
-          npm run generate
+          pnpm install --production --prefer-offline --frozen-lockfile
+          pnpm run generate
           mkdir -p app/app/ui/exported
           cp -r app/ui/exported/* app/app/ui/exported/
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Python dependencies
         run: |
