@@ -44,6 +44,8 @@ jobs:
             libcairo2-dev \
             pkg-config \
             python3-gi \
+            python3-gi-dev \
+            gobject-introspection \
             libwebkit2gtk-4.1-dev
 
       - name: Install pnpm
