@@ -33,7 +33,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           choco install -y qt6
-          
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -64,7 +64,11 @@ jobs:
 
       - name: Install PyInstaller + Qt backend
         run: |
-          pipenv run pip install pyinstaller pywebview[qt]
+          pipenv run pip install \
+            pyinstaller \
+            pywebview \
+            QtPy \
+            PySide6
 
       - name: Build native binary
         run: |
