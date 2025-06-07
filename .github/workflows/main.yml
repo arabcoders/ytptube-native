@@ -30,6 +30,27 @@ jobs:
           repository: arabcoders/ytptube
           ref: ${{ github.event.inputs.tag }}
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          architecture: "x64"
+
+      - name: Install Python dependencies
+        run: |
+          pip install pipenv
+          pipenv install --deploy
+
+      - name: Install PyInstaller + Qt backend (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pipenv run pip install pyinstaller pywebview QtPy PySide6
+
+      - name: Install PyInstaller + Qt backend (Other OSs)
+        if: matrix.os != 'windows-latest'
+        run: |
+          pipenv run pip install pyinstaller pywebview[qt]
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -47,26 +68,6 @@ jobs:
         run: |
           pnpm install --production --prefer-offline --frozen-lockfile
           pnpm run generate
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Python dependencies
-        run: |
-          pip install pipenv
-          pipenv install --deploy
-
-      - name: Install PyInstaller + Qt backend (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          pipenv run pip install pyinstaller pywebview QtPy PySide6
-
-      - name: Install PyInstaller + Qt backend (Other OSs)
-        if: matrix.os != 'windows-latest'
-        run: |
-          pipenv run pip install pyinstaller pywebview[qt]
 
       - name: Build native binary
         run: |
