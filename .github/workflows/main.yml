@@ -29,6 +29,11 @@ jobs:
           repository: arabcoders/ytptube
           ref: ${{ github.event.inputs.tag }}
 
+      - name: Install Qt (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install -y qt6-base-dev
+          
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -59,11 +64,7 @@ jobs:
 
       - name: Install PyInstaller + Qt backend
         run: |
-          pipenv run pip install \
-            pyinstaller \
-            pywebview \
-            QtPy \
-            PySide6
+          pipenv run pip install pyinstaller pywebview[qt]
 
       - name: Build native binary
         run: |
