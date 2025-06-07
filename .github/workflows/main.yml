@@ -43,6 +43,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install pipenv
+          pipenv --rm || true
           pipenv --python 3.11 install --deploy
 
       - name: Install PyInstaller + Qt backend (Windows)
