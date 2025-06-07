@@ -24,15 +24,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Checkout native-builder
-        uses: actions/checkout@v4
-
       - name: Checkout source repo
         uses: actions/checkout@v4
         with:
           repository: arabcoders/ytptube
           ref: ${{ github.event.inputs.tag }}
-          path: app
 
       - name: Install system dependencies (GTK)
         if: matrix.os == 'ubuntu-latest'
@@ -47,7 +43,7 @@ jobs:
             python3-gi \
             gobject-introspection \
             libwebkit2gtk-4.1-dev
-            
+
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -58,10 +54,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-          cache-dependency-path: "app/ui/pnpm-lock.yaml"
+          cache-dependency-path: "ui/pnpm-lock.yaml"
 
       - name: Build frontend
-        working-directory: app/ui
+        working-directory: ui
         run: |
           pnpm install --production --prefer-offline --frozen-lockfile
           pnpm run generate
@@ -74,7 +70,6 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install pipenv
-          cd app
           pipenv install --deploy
 
       - name: Install PyInstaller + GUI backend
@@ -83,8 +78,7 @@ jobs:
 
       - name: Build native binary
         run: |
-          cd app
-          pipenv run pyinstaller ../app.spec
+          pipenv run pyinstaller ./app.spec
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
