@@ -29,7 +29,7 @@ jobs:
         with:
           repository: arabcoders/ytptube
           ref: ${{ github.event.inputs.tag }}
-          
+
       - name: Install Qt (Windows)
         if: matrix.os == 'windows-latest'
         run: choco install -y qt6-base-dev
@@ -43,7 +43,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install pipenv
-          pipenv install --deploy
+          pipenv --python 3.11 install --deploy
 
       - name: Install PyInstaller + Qt backend (Windows)
         if: matrix.os == 'windows-latest'
