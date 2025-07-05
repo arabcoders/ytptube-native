@@ -81,5 +81,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-${{ matrix.os }}
+          name: app-${{ matrix.os }}-${{ github.event.inputs.tag }}
           path: dist/*
