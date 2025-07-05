@@ -62,7 +62,7 @@ jobs:
         run: |
           pip install uv pipenv
           uv venv
-          uv pip compile --all-extras --no-strip-extras --output requirements.txt
+          uv pip compile --all-extras --no-strip-extras ./pyproject.toml --output-file requirements.txt
           pipenv --rm || true
           pipenv install --python 3.11
           pipenv install -r requirements.txt
