@@ -30,9 +30,27 @@ jobs:
           repository: arabcoders/ytptube
           ref: ${{ github.event.inputs.tag }}
 
+      - name: Cache Chocolatey packages
+        if: matrix.os == 'windows-latest'
+        uses: actions/cache@v4
+        with:
+          path: C:\ProgramData\chocolatey\lib
+          key: choco-${{ runner.os }}-qt6
+          restore-keys: |
+            choco-${{ runner.os }}-
+
       - name: Install Qt (Windows)
         if: matrix.os == 'windows-latest'
         run: choco install -y qt6-base-dev
+
+      - name: Cache Python venv
+        id: cache-python
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: uv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            uv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
 
       - name: Set up Python
         uses: actions/setup-python@v5
