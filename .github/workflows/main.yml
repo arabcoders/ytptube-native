@@ -60,19 +60,22 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install uv
-          uv venv --system-site-packages --relocatable
-          uv sync
+          pip install uv pipenv
+          uv venv
+          uv pip compile --all-extras --no-strip-extras --output requirements.txt
+          pipenv --rm || true
+          pipenv install --python 3.11
+          pipenv install -r requirements.txt
 
       - name: Install PyInstaller + Qt backend (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          uv run pip install pyinstaller pywebview QtPy PySide6 uv
+          pipenv run pip install pyinstaller pywebview QtPy PySide6 uv
 
       - name: Install PyInstaller + Qt backend (Other OSs)
         if: matrix.os != 'windows-latest'
         run: |
-          uv run pip install pyinstaller pywebview[qt]
+          pipenv run pip install pyinstaller pywebview[qt]
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -94,7 +97,7 @@ jobs:
 
       - name: Build native binary
         run: |
-          uv run pyinstaller ./app.spec
+          pipenv run pyinstaller ./app.spec
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
