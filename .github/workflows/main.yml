@@ -42,7 +42,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install uv
-          uv venv
+          uv venv --system-site-packages --relocatable
           uv sync
 
       - name: Install PyInstaller + Qt backend (Windows)
